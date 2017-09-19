@@ -82,6 +82,10 @@ class Home extends Component {
 					time: items[ item ].time
 				} );
 			}
+			setTimeout( function () {
+				let elem = document.getElementById( 'dataHolder' );
+				elem.scrollTop = elem.scrollHeight;
+			}, 50 );
 			this.setState( {
 				items: newState
 			} );
