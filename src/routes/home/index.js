@@ -38,6 +38,10 @@ class Home extends Component {
 
 		}
 		itemsRef.push( item );
+		setTimeout( function () {
+			let elem = document.getElementById( 'dataHolder' );
+			elem.scrollTop = elem.scrollHeight;
+		}, 50 );
 		this.setState( {
 			message: '',
 			username: ''
@@ -63,7 +67,6 @@ class Home extends Component {
 	componentDidMount() {
 		auth.onAuthStateChanged( ( user ) => {
 			if ( user ) {
-				console.log( 'user', user );
 				this.setState( { user } );
 			}
 		} );
@@ -93,46 +96,53 @@ class Home extends Component {
 
 		return (
 			<article className={style.home}>
-				{this.state.user && <button className="logout" onClick={this.logout}>Log Out</button> }
+				{this.state.user &&
+					<div className="user-meta">
+						Logged in as {this.state.user.displayName || this.state.user.email} <a href="#" onClick={this.logout}>Log Out</a>
+					</div>
+				}
 				<header>
 					<div className='wrapper'>
 						<h1>House Chat</h1>
 					</div>
 				</header>
-				<div className='container'>
-					<section className='display-items'>
-						<ul>
-							{this.state.items.map( ( item ) => {
-								return (
-									<li key={item.id}>
-										<div class="avatar">
-											<img src={item.user.photo} width="36" height="36" />
-										</div>
-										<p>
-											<span className="author">{item.user.name}</span> <time>{item.time}</time><br />
-											{item.title}
-										</p>
-									</li>
-								)
-							} )}
-						</ul>
-					</section>
-					<section className='add-item'>
+
+				<section id="dataHolder" className='display-items'>
+					<ul>
+						{this.state.items.map( ( item ) => {
+							return (
+								<li key={item.id}>
+									<div class="avatar">
+										<img src={item.user.photo} width="36" height="36" />
+									</div>
+									<p>
+										<span className="author">{item.user.name}</span> <time>{item.time}</time><br />
+										{item.title}
+									</p>
+								</li>
+							)
+						} )}
+					</ul>
+				</section>
+				<section className='add-item'>
+
+					<form onSubmit={this.handleSubmit}>
 						{this.state.user ?
-							<form onSubmit={this.handleSubmit}>
+							<div>
 								<p><textarea name="message" placeholder="Write your Message" onChange={this.handleChange} value={this.state.message} /></p>
 								<button>Submit</button>
-							</form>
+							</div>
 							:
 							<p className="alert-box">
-								You must be logged in to write a message in the <em>House Chat</em>.<br/>
+								You must be logged in to write a message in the <em>House Chat</em>.<br />
 								Please <a href="#" onClick={this.login}>Log In</a> with your Google account.
-							</p>
+								</p>
 						}
+					</form>
 
-						
-					</section>
-				</div>
+
+				</section>
+
 			</article>
 		);
 	}

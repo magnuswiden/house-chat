@@ -1,0 +1,50 @@
+[debug] [2017-09-19T08:13:40.763Z] ----------------------------------------------------------------------
+[debug] [2017-09-19T08:13:40.765Z] Command:       /usr/local/bin/node /Users/magnuswiden/npm-global/bin/firebase deploy
+[debug] [2017-09-19T08:13:40.766Z] CLI Version:   3.12.0
+[debug] [2017-09-19T08:13:40.766Z] Platform:      darwin
+[debug] [2017-09-19T08:13:40.766Z] Node Version:  v6.2.0
+[debug] [2017-09-19T08:13:40.767Z] Time:          Tue Sep 19 2017 10:13:40 GMT+0200 (CEST)
+[debug] [2017-09-19T08:13:40.767Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2017-09-19T08:13:40.780Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2017-09-19T08:13:40.781Z] > authorizing via signed-in user
+[debug] [2017-09-19T08:13:40.783Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2017-09-19T08:13:40.783Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token { refresh_token: '1/lMcthlO8r0cCUCRUZG0Zvqt6ajTY5L8R4FYsypIU4Uk',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Tue Sep 19 2017 10:13:40 GMT+0200 (CEST)
+[debug] [2017-09-19T08:13:40.899Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-19T08:13:40.902Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/house-chat  
+ Tue Sep 19 2017 10:13:40 GMT+0200 (CEST)
+[debug] [2017-09-19T08:13:41.594Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-19T08:13:41.595Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/house-chat/tokens  
+ Tue Sep 19 2017 10:13:41 GMT+0200 (CEST)
+[debug] [2017-09-19T08:13:42.383Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'house-chat'...
+[info] 
+[info] i  deploying hosting
+[info] i  hosting: preparing build directory for upload...
+[debug] [2017-09-19T08:13:44.269Z] >>> HTTP REQUEST PUT https://deploy.firebase.com/v1/hosting/house-chat/uploads/-KuOBnJtlNsavhZ1oj2z?fileCount=24&message=  
+ Tue Sep 19 2017 10:13:44 GMT+0200 (CEST)
+[debug] [2017-09-19T08:14:49.825Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-19T08:14:49.825Z] [hosting] .tgz uploaded successfully, waiting for extraction
+[error] 
+[error] Error: File upload failed: Deploy failed.
+[debug] [2017-09-19T08:15:40.704Z] Error Context: {
+  "duration": 66936,
+  "fileCount": 24,
+  "ip": "185.27.169.164",
+  "start": 1505808873658,
+  "status": "failed",
+  "statusMessage": "Deploy failed.",
+  "uid": "109887799133292610224",
+  "uploadedCount": 24,
+  "user": {
+    "email": "magnus.widen@gmail.com",
+    "gaiaId": "109887799133292610224",
+    "image": "https://lh5.googleusercontent.com/-wgH0Zrtop0Y/AAAAAAAAAAI/AAAAAAAAAFo/ME_eN-dLfAg/photo.jpg"
+  }
+}

@@ -14,6 +14,7 @@ input[type=text], textarea {
 }
 textarea {
 	height: 80px;
+	font-family: Courier New, Courier, monospace;
 }
 
 button {
@@ -32,6 +33,12 @@ button {
 	color: #0A0A0A;
 	border-color: #E3E1DF;
 }
+button:focus,
+button:active,
+button {
+	outline: none;
+}
+
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
 	color: #a6a6a6;
 	font-style: italic;
