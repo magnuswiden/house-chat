@@ -15,6 +15,7 @@ class Home extends Component {
 			permissionGranted: false
 		}
 		this.handleChange = this.handleChange.bind( this );
+		this.handleKeyPress = this.handleKeyPress.bind( this );
 		this.handleSubmit = this.handleSubmit.bind( this );
 		this.login = this.login.bind( this );
 		this.logout = this.logout.bind( this );
@@ -27,6 +28,17 @@ class Home extends Component {
 		this.setState( {
 			[ e.target.name ]: e.target.value
 		} );
+	}
+	handleKeyPress( e ) {
+		const code = ( e.keyCode ? e.keyCode : e.which );
+		if ( code === 13 ) {
+			if ( !e.shiftKey ) {
+				this.setState( {
+					[ e.target.name ]: e.target.value
+				} );
+				this.handleSubmit( e );
+			}
+		}
 	}
 	handleSubmit( e ) {
 		e.preventDefault();
@@ -94,7 +106,7 @@ class Home extends Component {
 			} );
 			if ( !firstBatch ) {
 				const latestMessage = newState.slice( -1 ).pop();
-				if( latestMessage.user.uid != this.state.user.uid ) {
+				if ( latestMessage.user.uid != this.state.user.uid ) {
 					this.sendNotification( latestMessage )
 				}
 			}
@@ -128,7 +140,7 @@ class Home extends Component {
 		// Let's check whether notification permissions have already been granted
 		if ( ( "Notification" in window ) && Notification.permission === "granted" ) {
 			// If it's okay let's create a notification
-			var notification = new Notification( 
+			var notification = new Notification(
 				'New chat message',
 				{
 					body: message.user.name + ": " + message.title,
@@ -145,10 +157,10 @@ class Home extends Component {
 				{this.state.user &&
 					<div className="user-meta">
 						<p className="author-meta"><img className="round" src={this.state.user.photoURL} width="30" height="30" /> <span>{this.state.user.displayName || this.state.user.email} <a href="#" onClick={this.logout}>Log Out</a></span></p>
-						{ Notification.permission === "granted" || this.state.permissionGranted ?
+						{Notification.permission === "granted" || this.state.permissionGranted ?
 							<span>Notification is ON</span>
-						:
-							<span><a href="#" onClick={ () => this.enableNotifications( this.calleth ) }>Notify</a> me when new messages is posted.</span>
+							:
+							<span><a href="#" onClick={() => this.enableNotifications( this.calleth )}>Notify</a> me when new messages is posted.</span>
 						}
 					</div>
 				}
@@ -180,7 +192,7 @@ class Home extends Component {
 					<form onSubmit={this.handleSubmit}>
 						{this.state.user ?
 							<div>
-								<p><textarea name="message" placeholder="Write your Message" onChange={this.handleChange} value={this.state.message} /></p>
+								<p><textarea name="message" placeholder="Write your Message" onKeyPress={this.handleKeyPress} onChange={this.handleChange} value={this.state.message} /></p>
 								<button>Submit</button>
 							</div>
 							:
