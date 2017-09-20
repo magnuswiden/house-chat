@@ -95,4 +95,14 @@ html, body, #app, article {
 	top: 20px;
 	right: 20px;
 	font-size: 14px;
+	font-family: Courier New, Courier, monospace;
+}
+.user-meta .author-meta {
+	margin-bottom: 4px;
+	display: flex;
+	align-items: center;
+}
+.user-meta .author-meta img {
+	margin-right: 10px;
+	border-radius: 20px;
 }

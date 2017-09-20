@@ -11,12 +11,16 @@ class Home extends Component {
 			message: '',
 			username: '',
 			items: [],
-			user: null
+			user: null,
+			permissionGranted: false
 		}
 		this.handleChange = this.handleChange.bind( this );
 		this.handleSubmit = this.handleSubmit.bind( this );
 		this.login = this.login.bind( this );
 		this.logout = this.logout.bind( this );
+		this.sendNotification = this.sendNotification.bind( this );
+		this.enableNotifications = this.enableNotifications.bind( this );
+		this.calleth = this.calleth.bind( this );
 	}
 
 	handleChange( e ) {
@@ -32,12 +36,14 @@ class Home extends Component {
 			title: this.state.message,
 			user: {
 				name: this.state.user.displayName || this.state.user.email,
-				photo: this.state.user.photoURL
+				photo: this.state.user.photoURL,
+				uid: this.state.user.uid
 			},
 			time: _time
 
 		}
 		itemsRef.push( item );
+
 		setTimeout( function () {
 			let elem = document.getElementById( 'dataHolder' );
 			elem.scrollTop = elem.scrollHeight;
@@ -70,6 +76,7 @@ class Home extends Component {
 				this.setState( { user } );
 			}
 		} );
+		let firstBatch = true;
 		const itemsRef = firebase.database().ref( 'items' );
 		itemsRef.on( 'value', ( snapshot ) => {
 			let items = snapshot.val();
@@ -82,18 +89,53 @@ class Home extends Component {
 					time: items[ item ].time
 				} );
 			}
+			this.setState( {
+				items: newState
+			} );
+			if ( !firstBatch ) {
+				const latestMessage = newState.slice( -1 ).pop();
+				if( latestMessage.user.uid != this.state.user.uid ) {
+					this.sendNotification( latestMessage )
+				}
+			}
 			setTimeout( function () {
 				let elem = document.getElementById( 'dataHolder' );
 				elem.scrollTop = elem.scrollHeight;
 			}, 50 );
-			this.setState( {
-				items: newState
-			} );
+			firstBatch = false;
 		} );
 	}
 	removeItem( itemId ) {
 		const itemRef = firebase.database().ref( `/items/${itemId}` );
 		itemRef.remove();
+	}
+	calleth() {
+		this.setState( {
+			permissionGranted: true
+		} )
+	}
+	enableNotifications( callback ) {
+		if ( !( "Notification" in window ) ) {
+			alert( "This browser does not support desktop notification" );
+		}
+		else if ( Notification.permission !== "denied" ) {
+			Notification.requestPermission( function ( permission ) {
+				callback();
+			} );
+		}
+	}
+	sendNotification( message ) {
+		// Let's check whether notification permissions have already been granted
+		if ( ( "Notification" in window ) && Notification.permission === "granted" ) {
+			// If it's okay let's create a notification
+			var notification = new Notification( 
+				'New chat message',
+				{
+					body: message.user.name + ": " + message.title,
+					icon: message.user.photo
+				}
+			)
+		}
 	}
 
 	render() {
@@ -102,7 +144,12 @@ class Home extends Component {
 			<article className={style.home}>
 				{this.state.user &&
 					<div className="user-meta">
-						Logged in as {this.state.user.displayName || this.state.user.email} <a href="#" onClick={this.logout}>Log Out</a>
+						<p className="author-meta"><img className="round" src={this.state.user.photoURL} width="30" height="30" /> <span>{this.state.user.displayName || this.state.user.email} <a href="#" onClick={this.logout}>Log Out</a></span></p>
+						{ Notification.permission === "granted" || this.state.permissionGranted ?
+							<span>Notification is ON</span>
+						:
+							<span><a href="#" onClick={ () => this.enableNotifications( this.calleth ) }>Notify</a> me when new messages is posted.</span>
+						}
 					</div>
 				}
 				<header>
