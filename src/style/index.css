@@ -96,6 +96,7 @@ html, body, #app, article {
 	right: 20px;
 	font-size: 14px;
 	font-family: Courier New, Courier, monospace;
+	text-align: right
 }
 .user-meta .author-meta {
 	margin-bottom: 4px;
@@ -105,6 +106,20 @@ html, body, #app, article {
 .user-meta .author-meta img {
 	margin-right: 10px;
 	border-radius: 20px;
+}
+.onlineUsers {
+	position: fixed;
+	top: 100px;
+	right: 20px;
+	font-size: 14px;
+	font-family: Courier New, Courier, monospace;
+	text-align: right;
+	padding: 16px;
+	background: white;
+	border: 1px solid #e7e8e8
+}
+.onlineUsers p {
+	margin: 0;
 }
 
 @media only screen and (max-width: 768px) {
@@ -122,5 +137,8 @@ html, body, #app, article {
 	}
 	.alert-box {
 		font-size: 14px;
+	}
+	.onlineUsers {
+		display: none;
 	}
 }

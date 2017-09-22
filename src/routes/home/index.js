@@ -2,6 +2,7 @@
 import { h, Component } from 'preact';
 import firebase, { auth, provider } from '../../firebase.js';
 import moment from 'moment';
+import Gathering from "./Gathering";
 import style from './style';
 
 class Home extends Component {
@@ -12,7 +13,8 @@ class Home extends Component {
 			username: '',
 			items: [],
 			user: null,
-			permissionGranted: false
+			permissionGranted: false,
+			onlineUsers: []
 		}
 		this.handleChange = this.handleChange.bind( this );
 		this.handleKeyPress = this.handleKeyPress.bind( this );
@@ -22,6 +24,8 @@ class Home extends Component {
 		this.sendNotification = this.sendNotification.bind( this );
 		this.enableNotifications = this.enableNotifications.bind( this );
 		this.calleth = this.calleth.bind( this );
+		this.onlineUsersChange = this.onlineUsersChange.bind( this );
+		this.gathering = new Gathering( firebase.database(), 'HouseChat' );
 	}
 
 	handleChange( e ) {
@@ -69,12 +73,14 @@ class Home extends Component {
 		auth.signInWithPopup( provider )
 			.then( ( result ) => {
 				const user = result.user;
+				this.gathering.join( user.uid, user.displayName );
 				this.setState( {
 					user
 				} );
 			} );
 	}
 	logout() {
+		this.gathering.leave();
 		auth.signOut()
 			.then( () => {
 				this.setState( {
@@ -85,6 +91,7 @@ class Home extends Component {
 	componentDidMount() {
 		auth.onAuthStateChanged( ( user ) => {
 			if ( user ) {
+				this.gathering.join( user.uid, user.displayName );
 				this.setState( { user } );
 			}
 		} );
@@ -115,6 +122,20 @@ class Home extends Component {
 				elem.scrollTop = elem.scrollHeight;
 			}, 50 );
 			firstBatch = false;
+		} );
+		this.gathering.onUpdated( this.onlineUsersChange );
+	}
+	onlineUsersChange( count, user ) {
+		let newOnlineUsers = [];
+		for ( let item in user ) {
+			newOnlineUsers.push( {
+				id: item,
+				name: user[ item ]
+			} );
+		}
+	
+		this.setState( {
+			onlineUsers: newOnlineUsers
 		} );
 	}
 	removeItem( itemId ) {
@@ -164,6 +185,16 @@ class Home extends Component {
 						}
 					</div>
 				}
+				{this.state.onlineUsers.length > 0 &&
+					<div className="onlineUsers">
+						Online users:
+						{this.state.onlineUsers.map( ( item ) => {
+							return (
+								<p key={item.id}>{ item.name }</p>
+							)
+						} )}
+					</div>
+				}
 				<header>
 					<div className='wrapper'>
 						<h1>House Chat</h1>
@@ -180,7 +211,7 @@ class Home extends Component {
 									</div>
 									<p>
 										<span className="author">{item.user.name}</span> <time>{item.time}</time><br />
-										{ item.title.split( '\n' ).map( ( item, key ) => {
+										{item.title.split( '\n' ).map( ( item, key ) => {
 											return <span key={key}>{item}<br /></span>
 										} )}
 									</p>
