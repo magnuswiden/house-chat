@@ -180,7 +180,9 @@ class Home extends Component {
 									</div>
 									<p>
 										<span className="author">{item.user.name}</span> <time>{item.time}</time><br />
-										{item.title}
+										{ item.title.split( '\n' ).map( ( item, key ) => {
+											return <span key={key}>{item}<br /></span>
+										} )}
 									</p>
 								</li>
 							)
