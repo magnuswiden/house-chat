@@ -157,7 +157,7 @@ class Home extends Component {
 				{this.state.user &&
 					<div className="user-meta">
 						<p className="author-meta"><img className="round" src={this.state.user.photoURL} width="30" height="30" /> <span>{this.state.user.displayName || this.state.user.email} <a href="#" onClick={this.logout}>Log Out</a></span></p>
-						{Notification.permission === "granted" || this.state.permissionGranted ?
+						{( "Notification" in window ) && ( Notification.permission === "granted" || this.state.permissionGranted ) ?
 							<span>Notification is ON</span>
 							:
 							<span><a href="#" onClick={() => this.enableNotifications( this.calleth )}>Notify</a> me when new messages is posted.</span>
