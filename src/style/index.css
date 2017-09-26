@@ -65,6 +65,20 @@ html, body, #app, article {
 .display-items li p {
 	margin: 0;
 }
+.display-items li code {
+	/*font-family: Courier New, Courier, monospace;*/
+	display: inline-block;
+	background: #fff;
+	padding: 1px 4px;
+	border: 1px solid #e1e1e8;
+	color: #cc2255;
+	border-radius: 2px;
+	/*font-size: 14px;*/
+}
+.display-items li img {
+	max-width: 60%;
+	height: auto;
+}
 .author {
 	font-weight: bold;
 }
