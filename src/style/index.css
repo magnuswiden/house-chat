@@ -86,8 +86,9 @@ html, body, #app, article {
 	margin-right: 10px;
 	padding-top: 4px;
 }
-.avatar img {
+.display-items li .avatar img {
 	border-radius: 4px;
+	max-width: 100%;
 }
 .alert-box {
 	background: #fcf8e3;
