@@ -1,8 +1,8 @@
-/* eslint-disable */
+
 import { h, Component } from 'preact';
 import firebase, { auth, provider } from '../../firebase.js';
 import moment from 'moment';
-import Gathering from "./Gathering";
+import Gathering from './Gathering';
 import style from './style';
 
 class Home extends Component {
@@ -77,7 +77,8 @@ class Home extends Component {
 				this.setState( {
 					user
 				} );
-			} );
+			} )
+			.catch( console.error );
 	}
 	logout() {
 		this.gathering.leave();
@@ -86,7 +87,8 @@ class Home extends Component {
 				this.setState( {
 					user: null
 				} );
-			} );
+			} )
+			.catch( console.log );
 	}
 	componentDidMount() {
 		auth.onAuthStateChanged( ( user ) => {
@@ -133,7 +135,7 @@ class Home extends Component {
 				name: user[ item ]
 			} );
 		}
-	
+
 		this.setState( {
 			onlineUsers: newOnlineUsers
 		} );
@@ -148,10 +150,10 @@ class Home extends Component {
 		} )
 	}
 	enableNotifications( callback ) {
-		if ( !( "Notification" in window ) ) {
-			alert( "This browser does not support desktop notification" );
+		if ( !( 'Notification' in window ) ) {
+			alert( 'This browser does not support desktop notification' );
 		}
-		else if ( Notification.permission !== "denied" ) {
+		else if ( Notification.permission !== 'denied' ) {
 			Notification.requestPermission( function ( permission ) {
 				callback();
 			} );
@@ -159,12 +161,12 @@ class Home extends Component {
 	}
 	sendNotification( message ) {
 		// Let's check whether notification permissions have already been granted
-		if ( ( "Notification" in window ) && Notification.permission === "granted" ) {
+		if ( ( 'Notification' in window ) && Notification.permission === 'granted' ) {
 			// If it's okay let's create a notification
 			var notification = new Notification(
 				'New chat message',
 				{
-					body: message.user.name + ": " + message.title,
+					body: message.user.name + ': ' + message.title,
 					icon: message.user.photo
 				}
 			)
@@ -178,7 +180,7 @@ class Home extends Component {
 				{this.state.user &&
 					<div className="user-meta">
 						<p className="author-meta"><img className="round" src={this.state.user.photoURL} width="30" height="30" /> <span>{this.state.user.displayName || this.state.user.email} <a href="#" onClick={this.logout}>Log Out</a></span></p>
-						{( "Notification" in window ) && ( Notification.permission === "granted" || this.state.permissionGranted ) ?
+						{( 'Notification' in window ) && ( Notification.permission === 'granted' || this.state.permissionGranted ) ?
 							<span>Notification is ON</span>
 							:
 							<span><a href="#" onClick={() => this.enableNotifications( this.calleth )}>Notify</a> me when new messages is posted.</span>
@@ -190,7 +192,7 @@ class Home extends Component {
 						Online users:
 						{this.state.onlineUsers.map( ( item ) => {
 							return (
-								<p key={item.id}>{ item.name }</p>
+								<p key={item.id}>{item.name}</p>
 							)
 						} )}
 					</div>
@@ -232,7 +234,7 @@ class Home extends Component {
 							<p className="alert-box">
 								You must be logged in to write a message in the <em>House Chat</em>.<br />
 								Please <a href="#" onClick={this.login}>Log In</a> with your Google account.
-								</p>
+							</p>
 						}
 					</form>
 
