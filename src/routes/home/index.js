@@ -2,6 +2,7 @@
 import { h, Component } from 'preact';
 import firebase, { auth, provider } from '../../firebase.js';
 import moment from 'moment';
+import MDReactComponent from 'markdown-react-js';
 import Gathering from './Gathering';
 import style from './style';
 
@@ -164,7 +165,7 @@ class Home extends Component {
 		if ( ( 'Notification' in window ) && Notification.permission === 'granted' ) {
 			// If it's okay let's create a notification
 			var notification = new Notification(
-				'New chat message',
+				'House Chat Alert',
 				{
 					body: message.user.name + ': ' + message.title,
 					icon: message.user.photo
@@ -214,8 +215,9 @@ class Home extends Component {
 									<p>
 										<span className="author">{item.user.name}</span> <time>{item.time}</time><br />
 										{item.title.split( '\n' ).map( ( item, key ) => {
-											return <span key={key}>{item}<br /></span>
+											return <span key={key}><MDReactComponent text={item} /></span>
 										} )}
+										
 									</p>
 								</li>
 							)
