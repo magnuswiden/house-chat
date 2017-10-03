@@ -229,7 +229,7 @@ class Home extends Component {
 					<form onSubmit={this.handleSubmit}>
 						{this.state.user ?
 							<div>
-								<p><textarea name="message" placeholder="Write your Message" onKeyPress={this.handleKeyPress} onChange={this.handleChange} value={this.state.message} /></p>
+								<p><textarea name="message" placeholder="Your Message (use markdown to format)" onKeyPress={this.handleKeyPress} onChange={this.handleChange} value={this.state.message} /></p>
 								<button>Submit</button>
 							</div>
 							:

@@ -26,7 +26,7 @@ html, body, #app, article {
 	bottom: 0;
 	z-index: 10;
 	border-top: 1px solid #e7e8e8;
-	padding: 20px 0;
+	padding: 20px 0 20px;
 	background: white;
 }
 .add-item form {
@@ -40,6 +40,7 @@ html, body, #app, article {
 }
 .add-item form div p {
 	flex-grow: 1;
+	margin: 0;
 	margin-right: 30px;
 }
 .add-item form div button {
