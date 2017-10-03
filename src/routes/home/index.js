@@ -55,7 +55,7 @@ class Home extends Component {
 		// check for /giphy pattern in message 
 		let message = this.state.message.split( '/giphy ' );
 		if ( message.length > 1 ) {
-			this.giphy.translate( message[ 1 ] )
+			this.giphy.random( message[ 1 ] )
 				.then( this.giphyCallback )
 				.catch( console.error );
 		} else {
@@ -96,9 +96,9 @@ class Home extends Component {
 	giphyCallback( response ) {
 		if ( typeof response.data.type != 'undefined' ) {
 			let message = this.state.message.split( '/giphy ' );
-			let gif = response.data.images.original.url;
+			let gif = response.data.fixed_width_downsampled_url;
 			this.setState( {
-				message: message[1] + '\n!['+message[1]+'](' + gif + ')'
+				message: '`/giphy ' + message[1] + '`' + '\n!['+message[1]+'](' + gif + ')'
 			} );
 			this.postToDatabase();
 		} else {
