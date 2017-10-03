@@ -96,7 +96,7 @@ class Home extends Component {
 	giphyCallback( response ) {
 		if ( typeof response.data.type != 'undefined' ) {
 			let message = this.state.message.split( '/giphy ' );
-			let gif = response.data.fixed_width_downsampled_url;
+			let gif = response.data.image_url;
 			this.setState( {
 				message: '`/giphy ' + message[1] + '`' + '\n!['+message[1]+'](' + gif + ')'
 			} );
