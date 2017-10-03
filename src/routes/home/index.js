@@ -1,9 +1,9 @@
 
 import { h, Component } from 'preact';
 import firebase, { auth, provider } from '../../firebase.js';
-import moment from 'moment';
 import MDReactComponent from 'markdown-react-js';
 import Gathering from './Gathering';
+import Giphy from './Giphy';
 import HomeController from './HomeController';
 import style from './style';
 
@@ -28,7 +28,9 @@ class Home extends Component {
 		this.enableNotifications = this.enableNotifications.bind( this );
 		this.calleth = this.calleth.bind( this );
 		this.onlineUsersChange = this.onlineUsersChange.bind( this );
+		this.giphyCallback = this.giphyCallback.bind( this );
 		this.gathering = new Gathering( firebase.database(), 'HouseChat' );
+		this.giphy = new Giphy( 'dFdXCqbmwFoODXbxsUEyY021fKsOynVW' );
 	}
 
 	handleChange( e ) {
@@ -49,8 +51,26 @@ class Home extends Component {
 	}
 	handleSubmit( e ) {
 		e.preventDefault();
+
+		// check for /giphy pattern in message 
+		let message = this.state.message.split( '/giphy ' );
+		if ( message.length > 1 ) {
+			this.giphy.translate( message[ 1 ] )
+				.then( this.giphyCallback )
+				.catch( console.error );
+		} else {
+			this.postToDatabase();
+		}
+
+
+	}
+
+	postToDatabase() {
 		const itemsRef = firebase.database().ref( 'items' );
-		let _time = moment().format( 'HH:mm' ).toString();
+		let date = new Date();
+		let hours = date.getHours();
+		let minutes = date.getMinutes();
+		let _time = hours + ':' + minutes;
 		const item = {
 			title: this.state.message,
 			user: {
@@ -72,6 +92,20 @@ class Home extends Component {
 			username: ''
 		} );
 	}
+
+	giphyCallback( response ) {
+		if ( typeof response.data.type != 'undefined' ) {
+			let message = this.state.message.split( '/giphy ' );
+			let gif = response.data.images.original.url;
+			this.setState( {
+				message: message[1] + '\n!['+message[1]+'](' + gif + ')'
+			} );
+			this.postToDatabase();
+		} else {
+			this.postToDatabase();
+		}
+	}
+
 	login() {
 		auth.signInWithPopup( provider )
 			.then( ( result ) => {
@@ -91,7 +125,7 @@ class Home extends Component {
 					user: null
 				} );
 			} )
-			.catch( console.log );
+			.catch( console.error );
 	}
 	componentDidMount() {
 		auth.onAuthStateChanged( ( user ) => {
@@ -182,7 +216,7 @@ class Home extends Component {
 			<article className={style.home}>
 				{this.state.user &&
 					<div className="user-meta">
-						<p className="author-meta"><img className="round" src={this.state.user.photoURL} width="30" height="30" /> <span>{this.state.user.displayName || this.state.user.email} <a href="#" onClick={ this.logout }>Log Out</a></span></p>
+						<p className="author-meta"><img className="round" src={this.state.user.photoURL} width="30" height="30" /> <span>{this.state.user.displayName || this.state.user.email} <a href="#" onClick={this.logout}>Log Out</a></span></p>
 						{( 'Notification' in window ) && ( Notification.permission === 'granted' || this.state.permissionGranted ) ?
 							<span>Notification is ON</span>
 							:
@@ -219,7 +253,7 @@ class Home extends Component {
 										{item.title.split( '\n' ).map( ( item, key ) => {
 											return <span key={key}><MDReactComponent text={item} /></span>
 										} )}
-										
+
 									</p>
 								</li>
 							)

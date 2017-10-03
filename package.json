@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "markdown-react-js": "^0.3.0",
-    "moment": "^2.18.1",
     "preact": "^8.2.5",
     "preact-compat": "^3.17.0",
     "preact-router": "^2.5.7"
