@@ -98,7 +98,7 @@ class Home extends Component {
 			let message = this.state.message.split( '/giphy ' );
 			let gif = response.data.image_url;
 			this.setState( {
-				message: '`/giphy ' + message[1] + '`' + '\n!['+message[1]+'](' + gif + ')'
+				message: '`/giphy ' + message[ 1 ] + '`' + '\n![' + message[ 1 ] + '](' + gif + ')'
 			} );
 			this.postToDatabase();
 		} else {
@@ -135,7 +135,7 @@ class Home extends Component {
 			}
 		} );
 		let firstBatch = true;
-		const itemsRef = firebase.database().ref( 'items' );
+		const itemsRef = firebase.database().ref( 'items' ).limitToLast( 20 );
 		itemsRef.on( 'value', ( snapshot ) => {
 			let items = snapshot.val();
 			let newState = [];
