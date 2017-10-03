@@ -4,11 +4,13 @@ import firebase, { auth, provider } from '../../firebase.js';
 import moment from 'moment';
 import MDReactComponent from 'markdown-react-js';
 import Gathering from './Gathering';
+import HomeController from './HomeController';
 import style from './style';
 
 class Home extends Component {
 	constructor() {
 		super();
+		this.controller = new HomeController( firebase.database(), auth );
 		this.state = {
 			message: '',
 			username: '',
@@ -175,12 +177,12 @@ class Home extends Component {
 	}
 
 	render() {
-
+		const { logoutTest } = this.controller;
 		return (
 			<article className={style.home}>
 				{this.state.user &&
 					<div className="user-meta">
-						<p className="author-meta"><img className="round" src={this.state.user.photoURL} width="30" height="30" /> <span>{this.state.user.displayName || this.state.user.email} <a href="#" onClick={this.logout}>Log Out</a></span></p>
+						<p className="author-meta"><img className="round" src={this.state.user.photoURL} width="30" height="30" /> <span>{this.state.user.displayName || this.state.user.email} <a href="#" onClick={ this.logout }>Log Out</a></span></p>
 						{( 'Notification' in window ) && ( Notification.permission === 'granted' || this.state.permissionGranted ) ?
 							<span>Notification is ON</span>
 							:
