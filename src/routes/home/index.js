@@ -10,10 +10,10 @@ import style from './style';
 class Home extends Component {
 	constructor() {
 		super();
-		this.controller = new HomeController( firebase.database(), auth );
+		this.tableRef = 'items';
+		this.controller = new HomeController( firebase.database(), auth, this.tableRef );
 		this.state = {
 			message: '',
-			username: '',
 			items: [],
 			user: null,
 			permissionGranted: false,
@@ -28,9 +28,28 @@ class Home extends Component {
 		this.enableNotifications = this.enableNotifications.bind( this );
 		this.calleth = this.calleth.bind( this );
 		this.onlineUsersChange = this.onlineUsersChange.bind( this );
+		this.populateList = this.populateList.bind( this );
+		this.handleUpdates = this.handleUpdates.bind( this );
 		this.giphyCallback = this.giphyCallback.bind( this );
 		this.gathering = new Gathering( firebase.database(), 'HouseChat' );
 		this.giphy = new Giphy( 'dFdXCqbmwFoODXbxsUEyY021fKsOynVW' );
+	}
+
+	componentDidMount() {
+		auth.onAuthStateChanged( ( user ) => {
+			if ( user ) {
+				this.gathering.join( user.uid, user.displayName );
+				this.setState( { user } );
+			}
+		} );
+		this.gathering.onUpdated( this.onlineUsersChange );
+
+		// load all chat messages on page load ONCE.
+		this.controller.loadAllMessages( this.populateList );
+
+		// watch for changes and give us only the latest chat message
+		this.controller.onUpdates( this.handleUpdates );
+
 	}
 
 	handleChange( e ) {
@@ -66,7 +85,8 @@ class Home extends Component {
 	}
 
 	postToDatabase() {
-		const itemsRef = firebase.database().ref( 'items' );
+
+		const itemsRef = firebase.database().ref( this.tableRef );
 		let date = new Date();
 		let hours = date.getHours();
 		let minutes = date.getMinutes();
@@ -83,14 +103,15 @@ class Home extends Component {
 		}
 		itemsRef.push( item );
 
+		this.setState( {
+			message: ''
+		} );
+		let formEl = document.getElementById( 'message' );
+		formEl.value = '';
 		setTimeout( function () {
 			let elem = document.getElementById( 'dataHolder' );
 			elem.scrollTop = elem.scrollHeight;
-		}, 50 );
-		this.setState( {
-			message: '',
-			username: ''
-		} );
+		}, 250 );
 	}
 
 	giphyCallback( response ) {
@@ -127,43 +148,50 @@ class Home extends Component {
 			} )
 			.catch( console.error );
 	}
-	componentDidMount() {
-		auth.onAuthStateChanged( ( user ) => {
-			if ( user ) {
-				this.gathering.join( user.uid, user.displayName );
-				this.setState( { user } );
-			}
+
+	populateList( items ) {
+		let chatMessages = [];
+		for ( let item in items ) {
+			chatMessages.push( {
+				id: item,
+				title: items[ item ].title,
+				user: items[ item ].user,
+				time: items[ item ].time
+			} );
+		}
+		this.setState( {
+			items: chatMessages
 		} );
-		let firstBatch = true;
-		const itemsRef = firebase.database().ref( 'items' ).limitToLast( 20 );
-		itemsRef.on( 'value', ( snapshot ) => {
-			let items = snapshot.val();
-			let newState = [];
+		setTimeout( function () {
+			let elem = document.getElementById( 'dataHolder' );
+			elem.scrollTop = elem.scrollHeight;
+		}, 150 );
+	}
+
+	handleUpdates( items ) {
+		if ( this.state.items.length > 0 ) { // prevents this listener to trigger on page load
+			let newMessage = [];
 			for ( let item in items ) {
-				newState.push( {
+				newMessage.push( {
 					id: item,
 					title: items[ item ].title,
 					user: items[ item ].user,
 					time: items[ item ].time
 				} );
 			}
-			this.setState( {
-				items: newState
-			} );
-			if ( !firstBatch ) {
-				const latestMessage = newState.slice( -1 ).pop();
-				if ( latestMessage.user.uid != this.state.user.uid ) {
-					this.sendNotification( latestMessage )
-				}
+			const latestMessage = newMessage[ 0 ];
+			if ( latestMessage.user.uid != this.state.user.uid ) {
+				this.sendNotification( latestMessage )
 			}
+			let joined = this.state.items.concat( latestMessage );
+			this.setState( { items: joined } )
 			setTimeout( function () {
 				let elem = document.getElementById( 'dataHolder' );
 				elem.scrollTop = elem.scrollHeight;
-			}, 50 );
-			firstBatch = false;
-		} );
-		this.gathering.onUpdated( this.onlineUsersChange );
+			}, 150 );
+		}
 	}
+
 	onlineUsersChange( count, user ) {
 		let newOnlineUsers = [];
 		for ( let item in user ) {
@@ -176,10 +204,6 @@ class Home extends Component {
 		this.setState( {
 			onlineUsers: newOnlineUsers
 		} );
-	}
-	removeItem( itemId ) {
-		const itemRef = firebase.database().ref( `/items/${itemId}` );
-		itemRef.remove();
 	}
 	calleth() {
 		this.setState( {
@@ -201,7 +225,7 @@ class Home extends Component {
 		if ( ( 'Notification' in window ) && Notification.permission === 'granted' ) {
 			// If it's okay let's create a notification
 			var notification = new Notification(
-				'House Chat Alert',
+				'New message',
 				{
 					body: message.user.name + ': ' + message.title,
 					icon: message.user.photo
@@ -265,7 +289,7 @@ class Home extends Component {
 					<form onSubmit={this.handleSubmit}>
 						{this.state.user ?
 							<div>
-								<p><textarea name="message" placeholder="Your Message (use markdown to format)" onKeyPress={this.handleKeyPress} onChange={this.handleChange} value={this.state.message} /></p>
+								<p><textarea name="message" id="message" placeholder="Your /giphy message (markdown also works)" onKeyPress={this.handleKeyPress} onChange={this.handleChange} /></p>
 								<button>Submit</button>
 							</div>
 							:
