@@ -14,8 +14,6 @@ class HomeController {
 			ref.once( 'value', function ( snapshot ) {
 				callback( snapshot.val() );
 			} );
-		} else {
-			console.error( 'You have to pass a callback function to loadAllMessages(). That function will be called (with user count and hash of users as param) every time the user list changed.' );
 		}
 	};
 
@@ -25,6 +23,28 @@ class HomeController {
 			ref.on( 'value', function ( snapshot ) {
 				callback( snapshot.val() );
 			} );
+		}
+	};
+
+	post( postdata, callback ) {
+		if ( 'function' == typeof callback ) {
+			const itemsRef = this.tableref;
+			let date = new Date();
+			let hours = date.getHours();
+			let minutes = date.getMinutes() < 10 ? '0' : '' + date.getMinutes();
+			let _time = hours + ':' + minutes;
+			const item = {
+				title: postdata.message,
+				user: {
+					name: postdata.user.displayName || postdata.user.email,
+					photo: postdata.user.photoURL,
+					uid: postdata.user.uid
+				},
+				time: _time
+
+			}
+			itemsRef.push( item );
+			callback()
 		}
 	};
 }

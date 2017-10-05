@@ -31,6 +31,7 @@ class Home extends Component {
 		this.populateList = this.populateList.bind( this );
 		this.handleUpdates = this.handleUpdates.bind( this );
 		this.giphyCallback = this.giphyCallback.bind( this );
+		this.postCallback = this.postCallback.bind( this );
 		this.gathering = new Gathering( firebase.database(), 'HouseChat' );
 		this.giphy = new Giphy( 'dFdXCqbmwFoODXbxsUEyY021fKsOynVW' );
 	}
@@ -90,31 +91,11 @@ class Home extends Component {
 				.then( this.giphyCallback )
 				.catch( console.error );
 		} else {
-			this.postToDatabase();
+			this.controller.post( this.state, this.postCallback );
 		}
-
-
 	}
 
-	postToDatabase() {
-
-		const itemsRef = firebase.database().ref( this.tableRef );
-		let date = new Date();
-		let hours = date.getHours();
-		let minutes = date.getMinutes();
-		let _time = hours + ':' + minutes;
-		const item = {
-			title: this.state.message,
-			user: {
-				name: this.state.user.displayName || this.state.user.email,
-				photo: this.state.user.photoURL,
-				uid: this.state.user.uid
-			},
-			time: _time
-
-		}
-		itemsRef.push( item );
-
+	postCallback() {
 		this.setState( {
 			message: ''
 		} );
@@ -133,9 +114,9 @@ class Home extends Component {
 			this.setState( {
 				message: '`/giphy ' + message[ 1 ] + '`' + '\n![' + message[ 1 ] + '](' + gif + ')'
 			} );
-			this.postToDatabase();
+			this.controller.post( this.state, this.postCallback );
 		} else {
-			this.postToDatabase();
+			this.controller.post( this.state, this.postCallback );
 		}
 	}
 
