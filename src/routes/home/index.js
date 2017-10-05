@@ -10,7 +10,7 @@ import style from './style';
 class Home extends Component {
 	constructor() {
 		super();
-		this.tableRef = 'chat-items';
+		this.tableRef = 'items';
 		this.controller = new HomeController( firebase.database(), auth, this.tableRef );
 		this.state = {
 			message: '',
@@ -46,7 +46,7 @@ class Home extends Component {
 
 		// watch for changes and give us only the latest chat message
 		this.controller.onUpdates( this.handleUpdates );
-		
+
 		// load all chat messages on page load ONCE.
 		this.controller.loadAllMessages( this.populateList );
 
