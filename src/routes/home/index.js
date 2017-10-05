@@ -10,7 +10,7 @@ import style from './style';
 class Home extends Component {
 	constructor() {
 		super();
-		this.tableRef = 'items';
+		this.tableRef = 'chat-items';
 		this.controller = new HomeController( firebase.database(), auth, this.tableRef );
 		this.state = {
 			message: '',
@@ -44,12 +44,24 @@ class Home extends Component {
 		} );
 		this.gathering.onUpdated( this.onlineUsersChange );
 
+		// watch for changes and give us only the latest chat message
+		this.controller.onUpdates( this.handleUpdates );
+		
 		// load all chat messages on page load ONCE.
 		this.controller.loadAllMessages( this.populateList );
 
-		// watch for changes and give us only the latest chat message
-		this.controller.onUpdates( this.handleUpdates );
 
+	}
+
+	_normalizeData( currentWeather ) {
+		// Take only what our app needs and nothing more.
+		const { t, w, p } = currentWeather;
+
+		return {
+			temperature: t,
+			windspeed: w,
+			pressure: p
+		};
 	}
 
 	handleChange( e ) {
@@ -150,6 +162,7 @@ class Home extends Component {
 	}
 
 	populateList( items ) {
+		console.log( 'populate' );
 		let chatMessages = [];
 		for ( let item in items ) {
 			chatMessages.push( {
@@ -169,6 +182,7 @@ class Home extends Component {
 	}
 
 	handleUpdates( items ) {
+		console.log( 'update' );
 		if ( this.state.items.length > 0 ) { // prevents this listener to trigger on page load
 			let newMessage = [];
 			for ( let item in items ) {
