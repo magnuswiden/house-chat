@@ -44,7 +44,7 @@ class HomeController {
 
 			}
 			itemsRef.push( item );
-			callback()
+			callback();
 		}
 	};
 }

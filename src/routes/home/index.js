@@ -32,7 +32,7 @@ class Home extends Component {
 		this.handleUpdates = this.handleUpdates.bind( this );
 		this.giphyCallback = this.giphyCallback.bind( this );
 		this.postCallback = this.postCallback.bind( this );
-		this.gathering = new Gathering( firebase.database(), 'HouseChat' );
+		this.gathering = new Gathering( firebase.database(), 'DevChatGroup' );
 		this.giphy = new Giphy( 'dFdXCqbmwFoODXbxsUEyY021fKsOynVW' );
 	}
 
@@ -255,7 +255,7 @@ class Home extends Component {
 				}
 				<header>
 					<div className='wrapper'>
-						<h1>House Chat</h1>
+						<h1>Dev Chat</h1>
 					</div>
 				</header>
 
@@ -289,7 +289,7 @@ class Home extends Component {
 							</div>
 							:
 							<p className="alert-box">
-								You must be logged in to write a message in the <em>House Chat</em>.<br />
+								You must be logged in to write a message in the <em>Dev Chat</em>.<br />
 								Please <a href="#" onClick={this.login}>Log In</a> with your Google account.
 							</p>
 						}
